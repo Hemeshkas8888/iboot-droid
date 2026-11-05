@@ -292,9 +292,18 @@ which keeps Track-B GSI longterm-viable.
   ext4) and the TrebleDroid GSI list. "Official LineageOS GSI" in the
   mission is therefore a misnomer: Track A = community GSI builds of
   Lineage sources.
-- Test track sequence stays: Track B first (AOSP 16K), Track A alongside
-  (4K/16K-compat risk documented; eROFS/`ro.boot` fragments applied in the
-  vendor layer).
+- **Decision (2026-11-05, project owner):** Track B uses **Google's
+  published AOSP GSI binaries** (`aosp_arm64-exp-*`, vanilla) as the
+  starting userland — no custom build until the published binaries are
+  proven insufficient. Community Lineage GSIs are deferred. The Orchard
+  kernel stays as-is (`apple-16k`); the only kernel delta for Android is the
+  binder/bindinery fragment in `kernelspace/android-binder.cfg`
+  (docs/android-kernel-delta.md). If the published GSI turns out 4K-built,
+  the fallback order is: (1) page-compat behaviour of Android 16 for the
+  system image as it exists, (2) a one-off AOSP build with
+  `PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384` + `PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
+  := true`. Honest for now: the boot attempt itself is the measurement
+  (M2 ELF sweep + `getconf PAGE_SIZE` on device).
 
 ## 7. Project Sandcastle prior art, what to reuse
 
