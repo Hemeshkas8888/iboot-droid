@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "kind": "ibootdroid.gsi",
+  "track": "b-aosp-16",
+  "note": "Official AOSP GSI binaries published by Google; vanilla (no GMS). Pinned from the verified Android 16 GSI release notes. Never committed; fetched and verified at build/run time by android/fetch-gsi.",
+  "android": {
+    "version": 16,
+    "build_id": "BP2A.250605.031.A3",
+    "security_patch": "2025-06-01",
+    "date": "2025-06-03",
+    "abi": "arm64",
+    "slot": "ab",
+    "gms": false,
+    "url": null,
+    "url_page": "https://developer.android.com/about/versions/16/gsi-release-notes",
+    "filename": "aosp_arm64-exp-BP2A.250605.031.A3-13578795-82277143.zip",
+    "sha256": "8227714351abe504eb27920d0e95c1b672722d2b7c9c9610dad2aee768624add",
+    "contains": ["system.img"]
+  },
+  "open_questions": ["official_page_size_alignment"],
+  "fallback_plan": "If the published build is 4K-aligned (boot fails to map LOAD segments on the 16K kernel), build AOSP once with PRODUCT_MAX_PAGE_SIZE_SUPPORTED:=16384 and PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO:=true and pin that here with its own sha256."
+}

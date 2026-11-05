@@ -1,0 +1,16 @@
+# iBoot Droid fstab for j171/j172 (iPad 7, T8010)
+# Layout: no super/dynamic partitions; system-as-root GSI unpacked into the
+# root partition; separate vendor, metadata and data partitions.
+#
+# @SYSTEMPARTUUID, @VENDORPARTUUID, @BOOTPARTUUID and @DATAPARTUUID are
+# substituted by the installer at install time, like the BLS entry's
+# root= line: identity by PARTUUID only, never by partition number.
+#
+# fsmgr_flags: no verity and no avb (tethered boot, no verified boot chain
+# on this port). Filesystem for /data starts as ext4; f2fs arrives as its
+# own tuning delta in M2.
+
+@SYSTEMPARTUUID / ext4 rw,barrier=1 wait,first_stage_mount
+@VENDORPARTUUID /vendor ext4 ro,barrier=1 wait,first_stage_mount
+@BOOTPARTUUID /metadata ext4 rw,barrier=1 wait,first_stage_mount
+@DATAPARTUUID /data ext4 rw,barrier=1 wait,first_stage_mount,check

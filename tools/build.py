@@ -34,6 +34,7 @@ INPUTS = {
     'base': ['system/build-rootfs', 'system/assemble-rootfs', 'system/Containerfile',
              'system/install-toolchain', 'system/packages.txt'],
     'artwork': ['boot/build-artwork', 'boot/generate-logo.py', 'boot/splash.py', 'boot/artwork'],
+    'android-vendor': ['android/build-vendor', 'android/vendor'],
 }
 
 
@@ -83,6 +84,13 @@ def main():
     labwc, _ = component(PROJECT, 'labwc', INPUTS['labwc'],
                          lambda path, work: python('desktop/build-labwc', '--output', path),
                          artifact='labwc-tools')
+    # The Android vendor layer: reproducible, no container, one file set.
+    # Consumed by the release/install pipeline once Android boots (M2/M3);
+    # built here so every desktop release already carries it and it never
+    # rots.
+    android_vendor, _ = component(PROJECT, 'android-vendor', INPUTS['android-vendor'],
+                                  lambda path, work: python('android/build-vendor', '--output', path),
+                                  artifact='vendor-layer.tar.gz')
     # The base names the component, not a release: it serves every build with the same inputs.
     base, _ = component(PROJECT, 'base', INPUTS['base'],
                         lambda path, work: run('system/build-rootfs', '--output', path, '--desktop', desktop,

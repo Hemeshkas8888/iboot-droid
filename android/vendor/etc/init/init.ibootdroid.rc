@@ -1,0 +1,11 @@
+# iBoot Droid: init.ibootdroid.rc for j171/j172 (iPad 7, T8010)
+# The GSI system-as-root brings the standard init set (init.usb.rc,
+# init.usb.configfs.rc, properties, servicemanager...). This file carries
+# only what is device-specific. No stub HAL services yet: a service whose
+# binary does not exist spams boot failures and lies in logs. Per-Milestone
+# services land with their own binary requirements (android/README.md).
+
+on property:sys.boot_completed=1
+    # M3 floor: sys.boot_completed reached even with a black screen is a
+    # pass, and this marker is the thing adb/logcat records.
+    setprop vendor.ibootdroid.marker boot-completed

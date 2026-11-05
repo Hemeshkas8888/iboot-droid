@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Fetch and verify the pinned official AOSP GSI (android/gsi.json).
+
+The zip is never committed. If a direct URL is not pinned in gsi.json
+(url: null), this prints the pinned release-notes page, the exact filename
+and its SHA-256, verifies a provided zip against the pinned digest, and
+extracts the images the pin lists into the output directory.
+
+Usage:
+  android/fetch-gsi --output DIR            # verify/extract in DIR
+  android/fetch-gsi --zip ZIP --output DIR  # verify an explicitly named zip
+"""
+import argparse
+import hashlib
+import json
+import sys
+import zipfile
+from pathlib import Path
+
+
+def fail(message):
+    print(message, file=sys.stderr)
+    raise SystemExit(2)
+
+
+def load_pinned(reviewed_path):
+    spec = json.loads(Path(reviewed_path).read_text())
+    return spec, spec['android']
+
+
+def digest(path):
+    sha = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            sha.update(block)
+    return sha.hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--zip', type=Path, help='the GSI zip to verify')
+    parser.add_argument('--output', type=Path, required=True, help='output directory')
+    args = parser.parse_args()
+
+    root = Path(__file__).resolve().parent
+    _, pinned = load_pinned(root / 'gsi.json')
+
+    if pinned.get('url'):
+        print(f'Downloading the pinned GSI from {pinned["url"]} is not wired yet; '
+              'verify it after fetching by hand anyway.', file=sys.stderr)
+
+    candidate = args.zip or (args.output / pinned['filename'])
+    if not candidate.exists():
+        print(f'''The pinned GSI is not present. Download the official binary yourself:
+
+  {pinned['url_page']}
+  file:   {pinned['filename']}
+  sha256: {pinned['sha256']}
+
+then run:
+  android/fetch-gsi --zip PATH/TO/{pinned['filename']} --output {args.output}
+''')
+        raise SystemExit(1)
+
+    seen = digest(candidate)
+    if seen != pinned['sha256']:
+        fail(f'{candidate}: sha256 {seen} does not match the pinned {pinned["sha256"]}; delete it and re-download')
+    print(f'{candidate}: pinned sha256 matches')
+
+    args.output.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(candidate) as archive:
+        names = archive.namelist()
+        for member in pinned['contains']:
+            matches = [name for name in names if Path(name).name == member]
+            if not matches:
+                fail(f'{candidate}: the zip has no {member}; contents: {", ".join(sorted(names))[:400]}')
+            (args.output / member).write_bytes(archive.read(matches[0]))

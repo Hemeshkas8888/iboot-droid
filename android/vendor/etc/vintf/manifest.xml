@@ -1,0 +1,5 @@
+<manifest version="1.0" type="device" target-level="6" />
+<!-- iBoot Droid: iPad 7 (T8010, j171/j172) vendor manifest skeleton.
+     HALs land one milestone at a time, each with a log that proves it:
+     M4 graphics (gralloc + hwcomposer, software rendering first),
+     M5 input, M6 Wi-Fi. -->

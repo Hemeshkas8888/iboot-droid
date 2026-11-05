@@ -1,0 +1,5 @@
+# iBoot Droid ueventd.rc for j171/j172 (iPad 7, T8010).
+# Empty on purpose: no device-specific /dev ownership rules yet. The GSI
+# supplies its base ueventd.rc; platform (kernel) drivers create their
+# uevents and default ownership applies until M4/M5 HAL work adds rules
+# here (display, touch, Wi-Fi firmware loading).
