@@ -370,6 +370,7 @@ From the omarchy-a fork, device profile build uses `orchard.local.toml`
 | 5 | Does SurfaceFlinger like the `adbe` DRM KMS path (16K ELF build)? | M3 boot with `getconf PAGE_SIZE` + logcat log |
 | 6 | Charging > 500 mA state on J171 | follow devices/j171/README test plan from orchard (user-owned hardware required) |
 | 7 | Android first-stage init on a non-dynamic partition with our initrd model | M2 boot smoke (initramfs shell → `exec init=/init`) |
+| 8 | Does the published `aosp_arm64-exp` GSI boot to `sys.boot_completed` on the untouched apple-16k kernel? | M2 device boot; fallback order recorded in §6 |
 
 ## 11. Assumptions inventory (must be retired by M2)
 
