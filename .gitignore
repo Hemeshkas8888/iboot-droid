@@ -6,3 +6,4 @@ __pycache__/
 .DS_Store
 orchard.local.toml
 .orchard/
+.source-cache/

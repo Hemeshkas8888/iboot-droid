@@ -33,6 +33,11 @@ def recipe_sha(directory):
 
 
 def fetch(entry, target):
+    cached = HERE / '.source-cache' / target.name
+    if cached.exists() and sha(cached) == entry['sha256']:
+        print('Using cached source:', cached, flush=True)
+        shutil.copyfileobj(cached.open('rb'), target.open('wb'))
+        return f'cache:{cached}'
     for url in entry['urls']:
         print('Fetching:', url, flush=True)
         try:
